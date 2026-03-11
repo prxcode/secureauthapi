@@ -1,0 +1,11 @@
+# Documentation to ignore
+EXPLANATION.md
+tempfile.txt
+
+# Build artifacts
+/target/
+*.class
+*.jar
+
+# IDE specific
+.vscode/
