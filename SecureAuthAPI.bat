@@ -1,22 +1,35 @@
 @echo off
 
+echo ---------------------------------------------------
+echo ## Building SecureAuthAPI with Maven...
+echo ---------------------------------------------------
 
-call some-executable-batchfiles/build.bat
+call mvn clean install
 IF %ERRORLEVEL% NEQ 0 (
     echo Build failed! Exiting...
     pause
     exit /b %ERRORLEVEL%
 )
 
-call some-executable-batchfiles/show.bat
+echo ---------------------------------------------------
+echo ## Launching Spring Boot Server...
+echo ---------------------------------------------------
 
-echo =========================
-echo Running the Spring Boot server...
-echo =========================
-call some-executable-batchfiles/run.bat
+start "SecureAuthAPI Server" cmd /k "mvn spring-boot:run"
 
-REM Optional: wait a few seconds to make sure the server is up
-timeout /t 10 /nobreak >nul
+echo ---------------------------------------------------
+echo ## Waiting 8 seconds for server to start up...
+echo ---------------------------------------------------
 
+timeout /t 8 /nobreak >nul
 
-pause
+echo ---------------------------------------------------
+echo ## Launching browser to http://localhost:8080 ...
+echo ---------------------------------------------------
+
+start http://localhost:8080
+
+echo ---------------------------------------------------
+echo ## SecureAuthAPI is running.
+echo Close the "SecureAuthAPI Server" console window to stop.
+echo ---------------------------------------------------

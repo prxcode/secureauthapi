@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  # Redis cache database container
+  redis:
+    image: redis:alpine
+    container_name: secureauth-redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  # Spring Boot REST API container
+  app:
+    build: .
+    container_name: secureauth-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    environment:
+      # Inject redis host matching the service name above
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
+      
+      # Disable IP filtering inside container by default,
+      # preventing docker internal routing from causing 403 Forbidden on host access
+      - SECURITY_IP_FILTER_ENABLED=false
+    restart: always

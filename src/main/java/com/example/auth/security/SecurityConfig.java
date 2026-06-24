@@ -6,8 +6,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.auth.service.CustomUserDetailsService;
 
@@ -16,11 +18,13 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final JwtFilter jwtFilter;
 
-    // Inject PasswordEncoder from PasswordConfig.java
-    public SecurityConfig(CustomUserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    // Inject CustomUserDetailsService, PasswordEncoder, and JwtFilter
+    public SecurityConfig(CustomUserDetailsService userDetailsService, PasswordEncoder passwordEncoder, JwtFilter jwtFilter) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.jwtFilter = jwtFilter;
     }
 
     // Configure authentication provider with custom user details service
@@ -38,23 +42,25 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // Configure HTTP security
+    // Configure HTTP security with stateless JWT filter
     @Bean
-public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http
-        .csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/admin/**").hasRole("ADMIN")
-            .anyRequest().authenticated()
-        )
-        .formLogin()  // optional: you can use form login for HTML pages
-        .and()
-        .logout(logout -> logout
-            .logoutUrl("/logout")
-            .logoutSuccessUrl("/")  // redirect back to home
-            .invalidateHttpSession(true)
-            .deleteCookies("JSESSIONID")
-        );
-    return http.build();
-}
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable()) // Disable CSRF since we are using stateless JWTs
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // No state saved
+            .authorizeHttpRequests(auth -> auth
+                // Allow home page, authentication endpoints, and static resources
+                .requestMatchers("/", "/auth/login", "/auth/logout", "/error", "/css/**", "/js/**").permitAll()
+                // Restrict admin endpoints
+                .requestMatchers("/api/admin").hasRole("ADMIN")
+                // Restrict user profile
+                .requestMatchers("/api/user/me").authenticated()
+                .anyRequest().authenticated()
+            )
+            .authenticationProvider(authenticationProvider())
+            // Put our JWT filter before the standard authentication filter
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
 }

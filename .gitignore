@@ -1,11 +1,29 @@
-# Documentation to ignore
-EXPLANATION.md
-tempfile.txt
-
-# Build artifacts
-/target/
+# Standard Maven Build Ignores
+target/
 *.class
 *.jar
+*.war
+*.ear
+*.tar
 
-# IDE specific
+# IDE specific settings
+.idea/
+*.iml
 .vscode/
+.project
+.classpath
+.settings/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS specific temporary files
+Thumbs.db
+.DS_Store
+*.tmp
+*.bak
+
+# Environment secrets
+.env
+.env.local
