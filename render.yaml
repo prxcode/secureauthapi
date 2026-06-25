@@ -1,0 +1,48 @@
+services:
+  # The SecureAuthAPI Spring Boot Application
+  - type: web
+    name: secureauth-api
+    env: docker
+    plan: free
+    region: ohio
+    dockerCommand: "" # Uses the default ENTRYPOINT in Dockerfile
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: secureauth-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: secureauth-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: secureauth-db
+          property: password
+      - key: SPRING_DATA_REDIS_HOST
+        fromService:
+          type: redis
+          name: secureauth-redis
+          property: host
+      - key: SPRING_DATA_REDIS_PORT
+        fromService:
+          type: redis
+          name: secureauth-redis
+          property: port
+      - key: SECURITY_IP_FILTER_ENABLED
+        value: "false" # Often needed for managed platforms routing
+
+  # PostgreSQL Database Instance
+  - type: psql
+    name: secureauth-db
+    plan: free
+    region: ohio
+    databaseName: authdb
+    user: postgres
+
+  # Redis Cache Instance
+  - type: redis
+    name: secureauth-redis
+    plan: free
+    region: ohio
+    ipAllowList: [] # Allow internal Render connections

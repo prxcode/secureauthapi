@@ -6,7 +6,19 @@ services:
     image: redis:alpine
     container_name: secureauth-redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
+    restart: always
+
+  # PostgreSQL database container
+  db:
+    image: postgres:15-alpine
+    container_name: secureauth-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=authdb
+    ports:
+      - "5433:5432"
     restart: always
 
   # Spring Boot REST API container
@@ -17,10 +29,16 @@ services:
       - "8080:8080"
     depends_on:
       - redis
+      - db
     environment:
       # Inject redis host matching the service name above
       - SPRING_DATA_REDIS_HOST=redis
       - SPRING_DATA_REDIS_PORT=6379
+      
+      # Inject postgres database url matching the service name above
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/authdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
       
       # Disable IP filtering inside container by default,
       # preventing docker internal routing from causing 403 Forbidden on host access

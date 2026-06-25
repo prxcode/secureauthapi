@@ -60,6 +60,19 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- spring data jpa for database persistence -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- postgresql driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- h2 database (optional, for testing without MySQL) -->
         <dependency>
             <groupId>com.h2database</groupId>

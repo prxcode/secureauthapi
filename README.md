@@ -111,5 +111,13 @@ Cache Layer
 - To run docker container: `docker run -p 8080:8080 secureauthapi`
 - Or use docker-compose: `docker-compose up --build`
 
-## To Run Load Tests
-- Start the server, then run `python load_test.py` to test the rate-limiting functionality under simulated load.
+## Load Tests
+K6 Load Testing Screenshot when 5000 users are hitting the server
+![K6 Load Testing](diagram/k6_load_testing.png)
+
+
+## TO Run
+Just open Docker Desktop, and run
+```bash
+docker-compose up --build
+```   

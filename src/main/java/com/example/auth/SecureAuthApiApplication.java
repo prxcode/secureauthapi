@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.auth.model.User;
-import com.example.auth.service.InMemoryUserService;
+import com.example.auth.repository.UserRepository;
 
 @SpringBootApplication
 public class SecureAuthApiApplication {
@@ -17,15 +17,15 @@ public class SecureAuthApiApplication {
     }
 
     @Bean
-    CommandLineRunner run(InMemoryUserService userService, PasswordEncoder encoder) {
+    CommandLineRunner run(UserRepository userRepository, PasswordEncoder encoder) {
         return args -> {
-            if (userService.findByUsername("testuser") == null) {
+            if (userRepository.findByUsername("testuser") == null) {
                 User user = new User("testuser", encoder.encode("password123"), "ROLE_USER");
-                userService.saveUser(user);
+                userRepository.save(user);
             }
-            if (userService.findByUsername("admin") == null) {
+            if (userRepository.findByUsername("admin") == null) {
                 User admin = new User("admin", encoder.encode("admin123"), "ROLE_ADMIN");
-                userService.saveUser(admin);
+                userRepository.save(admin);
             }
         };
     }
