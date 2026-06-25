@@ -133,3 +133,8 @@ cd secureauthapi
 ```bash
 docker-compose up -d --build
 ```
+
+3. To stop
+```bash
+docker-compose down
+```
