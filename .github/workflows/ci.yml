@@ -10,26 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_DB: authdb
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      redis:
-        image: redis:alpine
-        ports:
-          - 6379:6379
-
     steps:
     - uses: actions/checkout@v3
 
@@ -42,9 +22,3 @@ jobs:
 
     - name: Build and Test with Maven
       run: mvn -B package --file pom.xml
-      env:
-        SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/authdb
-        SPRING_DATASOURCE_USERNAME: postgres
-        SPRING_DATASOURCE_PASSWORD: postgres
-        SPRING_DATA_REDIS_HOST: localhost
-        SPRING_DATA_REDIS_PORT: 6379
