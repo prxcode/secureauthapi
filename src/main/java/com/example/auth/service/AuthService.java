@@ -20,29 +20,26 @@ public class AuthService {
         this.redisTemplate = redisTemplate;
     }
 
-    /**
-     * Authenticate user, generate JWT, and save session in Redis.
-     * Throws exception if Redis or DB is down.
-     */
+    // Authenticate user, generate JWT, and save session in Redis.
+    // Throws exception if Redis or DB is down.
     public String login(String username, String password) {
         // Authenticate credentials against UserDetailsService
         Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
-        );
+                new UsernamePasswordAuthenticationToken(username, password));
 
         // If authentication succeeded, generate JWT token
         String token = JwtUtil.generateToken(username);
 
-        // Save session mapping in Redis (session:token:<JWT> -> username) with 1-day TTL
-        // If Redis is down, this will throw an exception to be handled by the controller
+        // Save session mapping in Redis (session:token:<JWT> -> username) with 1-day
+        // TTL
+        // If Redis is down, this will throw an exception to be handled by the
+        // controller
         redisTemplate.opsForValue().set("session:token:" + token, username, Duration.ofHours(24));
 
         return token;
     }
 
-    /**
-     * Terminate session by deleting the token key from Redis
-     */
+    // Terminate session by deleting the token key from Redis
     public void logout(String token) {
         // Remove token from Redis cache
         // If Redis is down, this will throw an exception and let caller know

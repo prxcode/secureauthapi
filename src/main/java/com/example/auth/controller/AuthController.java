@@ -22,9 +22,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    /**
-     * Endpoint to handle user login. Expects a JSON request body.
-     */
+    // Endpoint to handle user login. Expects a JSON request body.
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
         String username = loginRequest.get("username");
@@ -46,17 +44,16 @@ public class AuthController {
         } catch (Exception e) {
             // Fail clearly if Redis or Database connection fails (no silent fallbacks)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Internal Server Error", "message", "Database or cache service error: " + e.getMessage()));
+                    .body(Map.of("error", "Internal Server Error", "message",
+                            "Database or cache service error: " + e.getMessage()));
         }
     }
 
-    /**
-     * Endpoint to handle user logout. Deletes token from Redis.
-     */
+    // Endpoint to handle user logout. Deletes token from Redis.
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-        
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "Bad Request", "message", "Missing or invalid Authorization header"));
@@ -69,7 +66,8 @@ public class AuthController {
         } catch (Exception e) {
             // Explicit error when Redis deletion fails
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Internal Server Error", "message", "Failed to destroy session in cache: " + e.getMessage()));
+                    .body(Map.of("error", "Internal Server Error", "message",
+                            "Failed to destroy session in cache: " + e.getMessage()));
         }
     }
 }
