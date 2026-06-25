@@ -7,10 +7,18 @@ services:
     region: ohio
     dockerCommand: "" # Uses the default ENTRYPOINT in Dockerfile
     envVars:
-      - key: SPRING_DATASOURCE_URL
+      - key: DB_HOST
         fromDatabase:
           name: secureauth-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: secureauth-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: secureauth-db
+          property: database
       - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: secureauth-db

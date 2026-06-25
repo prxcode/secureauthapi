@@ -36,7 +36,9 @@ services:
       - SPRING_DATA_REDIS_PORT=6379
       
       # Inject postgres database url matching the service name above
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/authdb
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=authdb
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       
