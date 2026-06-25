@@ -13,5 +13,5 @@ WORKDIR /app
 # Copy the built jar from the build stage
 COPY --from=build /app/target/secureauthapi*.jar app.jar
 
-# Run the spring-boot jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the spring-boot jar, forcing the correct JDBC URL via command line to override any phantom Render environment variables
+ENTRYPOINT ["sh", "-c", "java -jar app.jar --spring.datasource.url=jdbc:postgresql://${DB_HOST:-localhost}:${DB_PORT:-5433}/${DB_NAME:-authdb}"]
