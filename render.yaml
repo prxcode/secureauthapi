@@ -19,6 +19,8 @@ services:
         fromDatabase:
           name: secureauth-db
           property: database
+      - key: DB_SSL_MODE
+        value: "?sslmode=require"
       - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: secureauth-db
