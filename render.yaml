@@ -44,5 +44,3 @@ databases:
   - name: secureauth-db
     plan: free
     region: ohio
-    databaseName: authdb
-    user: postgres
