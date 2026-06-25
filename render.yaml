@@ -32,17 +32,17 @@ services:
       - key: SECURITY_IP_FILTER_ENABLED
         value: "false" # Often needed for managed platforms routing
 
-  # PostgreSQL Database Instance
-  - type: psql
-    name: secureauth-db
-    plan: free
-    region: ohio
-    databaseName: authdb
-    user: postgres
-
   # Redis Cache Instance
   - type: redis
     name: secureauth-redis
     plan: free
     region: ohio
     ipAllowList: [] # Allow internal Render connections
+
+databases:
+  # PostgreSQL Database Instance
+  - name: secureauth-db
+    plan: free
+    region: ohio
+    databaseName: authdb
+    user: postgres
