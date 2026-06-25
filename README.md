@@ -1,28 +1,23 @@
 ## SecureAuthAPI
-While building backend for Banking app, ecommerce, Admin dashboard or SaaS Platform. We have to figure out these problems:
-- User Must login securely [we can use JWT authentication]
-- Passwords must be safe [Password Hashing]
-- Only admin access admin APIs [Role based access]
-- Prevent Brute Force login [Rate limiting]
-- Avoiding hitting database repeatedly [Redis caching]
-- Secure APIs [Spring security]
-- Deploy easily [Using Docker]
+A production-style authentication and authorization system built with Spring Boot, featuring JWT-based security, Redis-backed rate limiting, and Dockerized deployment.
 
-To solve this problem I have built **SecureAuthAPI**, here i demonstrated how using *Java* and *SpringBoot* Framework to built RESTAPIs quickly as it handles web server, dependency injection, config, security, database connection
-- While *SpringSecurity* handles authentication, authorization, password encryption, security filters. Now instead of storing sessions in server memory 
-- I have used JWT (*JSON Web Token*: a token used to authenticate user). 
-- I have also used *Redis*(In memory database used for caching, as its faster than mysql and can store user sessions and cached user data). 
-- Last I have used *Docker* to package the application into a container.
+Designed and validated under high load (5,000 virtual users, ~2000 RPS) with enforced abuse protection via Redis (HTTP 429 rate limiting).
 
-## What's New / Recent Updates
-Here is what was recently updated to make this project resume and publication-ready:
-- **Clean UI Dashboard**: Added a student-friendly web interface `home.html` at `http://localhost:8080` to interactively test login, JWTs, and rate limiting.
-- **Python Load Testing Tool**: Added a Python script `load_test.py` to simulate high traffic and verify the Redis rate limiter.
-- **One-Click Startup**: Fixed the `SecureAuthAPI.bat` script so you can run the entire project with a single command without needing manual key presses. Just type `./SecureAuthAPI.bat` in your terminal or double click on that bat file if you are on windows. 
+## System Overview
+SecureAuthAPI is designed to solve core backend security challenges:
 
+- Secure authentication using JWT
+- Role-based access control (USER / ADMIN)
+- Protection against brute-force attacks using rate limiting
+- Session and token management using Redis
+- Containerized deployment using Docker
 
-- **Comprehensive Documentation**: Refactored detailed explanations out of the README and into a dedicated `docs/` folder to make this file easy to read.
-- **Bug Fixes**: Resolved HTTP 400 Bad Request errors and fixed CSS overflow issues in the console UI.
+## Tech Stack
+- Spring Boot: REST API backend and business logic layer
+- Spring Security: Authentication + authorization middleware
+- JWT: Stateless session management
+- Redis: Distributed rate limiting + caching layer
+- Docker: Containerized deployment environment
 
 ## In-Depth Documentation
 Check the `docs/` folder for detailed guides on how each part works:
@@ -79,7 +74,9 @@ Protected APIs allowed
 
 ![Authentication Flow](diagram/secureauthapi-authflow.png)
 
-## Architecture 
+## Architecture
+The system is designed as a stateless authentication service with Redis acting as a shared in-memory enforcement layer for rate limiting and session control.
+
 ```bash
 Client (Postman / Frontend UI / Python Script)
           ↓
@@ -111,13 +108,28 @@ Cache Layer
 - To run docker container: `docker run -p 8080:8080 secureauthapi`
 - Or use docker-compose: `docker-compose up --build`
 
-## Load Tests
-K6 Load Testing Screenshot when 5000 users are hitting the server
-![K6 Load Testing](diagram/k6_load_testing.png)
+## Load Testing & Performance Validation (k6)
+
+- Simulated load: up to 5000 virtual users
+- Sustained throughput: ~2000 requests/sec
+- Average latency: ~3 ms
+- p95 latency: ~10 ms
+- Rate limiting: Fully enforced via Redis (HTTP 429)
+- Result: System remained stable under high concurrency with no crashes
+
+![K6 Load Testing](diagram/k6-test-log-1.png)
+![K6 Load Testing](diagram/k6-test-log-2.png)
 
 
-## TO Run
-Just open Docker Desktop, and run
+
+## To Run (Local Development)
+1. Clone the repository:
 ```bash
-docker-compose up --build
-```   
+git clone https://github.com/prxcode/secureauthapi.git
+cd secureauthapi
+```
+
+2. Make sure Docker Desktop is open, then start the entire stack (API, Redis, Postgres) with one command:
+```bash
+docker-compose up -d --build
+```
